@@ -6,7 +6,7 @@ import hashlib as hasher
 import datetime as date
 node = Flask(__name__)
 
-#testing how github really works
+#Änderung mit dem HP
 
 # Define what a Snakecoin block is
 class Block:
