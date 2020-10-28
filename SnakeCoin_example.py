@@ -172,5 +172,3 @@ def mine():
   }) + "\n"
 
 node.run()
-
-#Änderung mit dem surface
