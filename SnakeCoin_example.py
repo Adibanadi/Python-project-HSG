@@ -6,6 +6,8 @@ import hashlib as hasher
 import datetime as date
 node = Flask(__name__)
 
+print("hallo velo")
+
 # Define what a Snakecoin block is
 class Block:
   def __init__(self, index, timestamp, data, previous_hash):
@@ -170,3 +172,5 @@ def mine():
   }) + "\n"
 
 node.run()
+
+print("hallo velo")
