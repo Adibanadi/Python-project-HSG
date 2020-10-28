@@ -3,10 +3,12 @@ from flask import request
 import json
 import requests
 import hashlib as hasher
+from hashlib import sha256
 import datetime as date
 node = Flask(__name__)
+blockchain = Blockchain()
 
-# Define what a Snakecoin block is
+# Define what a block is
 class Block:
   def __init__(self, index, timestamp, data, previous_hash):
     self.index = index
@@ -16,33 +18,30 @@ class Block:
     self.hash = self.hash_block()
   
   def hash_block(self):
-    sha = hasher.sha256()
-    seq = (str(x) for x in (
-        self.index, self.timestamp, self.data, self.previous_hash))
-    sha.update(''.join(seq).encode('utf-8'))
-    return sha.hexdigest()
+    block_string = json.dumps(self.__dict__, sort_keys=True)
+    return sha256(blaock_string.encode()).hexdigest()
 
-# Generate genesis block
-def create_genesis_block():
-  # Manually construct a block with
-  # index zero and arbitrary previous hash
-  return Block(0, date.datetime.now(), {
-    "proof-of-work": 9,
-    "transactions": None
-  }, "0")
+# Define the blockchain including genesis block
+class Blockchain:
+    def __init__(self):
+      self.chain = []
+      self.create_genesis_block()
+
+    def create_genesis_block(self):
+      genesis_block = Block(0, date.datetiem.now(), {
+        "proof-of-work": 9,
+        "transactions": None
+      }, "0")
+      genesis_block.hash = genesis_block.compute_hash()
+      self.chain.append(genesis_block)
 
 # A completely random address of the owner of this node
 miner_address = "q3nf394hjg-random-miner-address-34nf3i4nflkn3oi"
-# This node's blockchain copy
-blockchain = []
-blockchain.append(create_genesis_block())
 # Store the transactions that
 # this node has in a list
 this_nodes_transactions = []
-# Store the url data of every
-# other node in the network
-# so that we can communicate
-# with them
+# Store the url data of every other node in the network
+# so that we can communicate with them
 peer_nodes = []
 # A variable to deciding if we're mining or not
 mining = True
