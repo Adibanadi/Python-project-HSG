@@ -8,6 +8,8 @@ import datetime as date
 node = Flask(__name__)
 blockchain = Blockchain()
 
+# Test Fabio
+
 # Define what a block is
 class Block:
   def __init__(self, index, timestamp, data, previous_hash):
