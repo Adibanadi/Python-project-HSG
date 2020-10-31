@@ -3,14 +3,13 @@ from flask import request
 import json
 import requests
 import hashlib as hasher
-from hashlib import sha256
 import datetime as date
+import string
+import random
+import time
 node = Flask(__name__)
-blockchain = Blockchain()
 
-# Test Fabio
-
-# Define what a block is
+# Define what a Snakecoin block is
 class Block:
   def __init__(self, index, timestamp, data, previous_hash):
     self.index = index
@@ -20,30 +19,33 @@ class Block:
     self.hash = self.hash_block()
   
   def hash_block(self):
-    block_string = json.dumps(self.__dict__, sort_keys=True)
-    return sha256(blaock_string.encode()).hexdigest()
+    sha = hasher.sha256()
+    seq = (str(x) for x in (
+        self.index, self.timestamp, self.data, self.previous_hash))
+    sha.update(''.join(seq).encode('utf-8'))
+    return sha.hexdigest()
 
-# Define the blockchain including genesis block
-class Blockchain:
-    def __init__(self):
-      self.chain = []
-      self.create_genesis_block()
-
-    def create_genesis_block(self):
-      genesis_block = Block(0, date.datetiem.now(), {
-        "proof-of-work": 9,
-        "transactions": None
-      }, "0")
-      genesis_block.hash = genesis_block.compute_hash()
-      self.chain.append(genesis_block)
+# Generate genesis block
+def create_genesis_block():
+  # Manually construct a block with
+  # index zero and arbitrary previous hash
+  return Block(0, date.datetime.now(), {
+    "proof-of-work": 9,
+    "transactions": None
+  }, "0")
 
 # A completely random address of the owner of this node
 miner_address = "q3nf394hjg-random-miner-address-34nf3i4nflkn3oi"
+# This node's blockchain copy
+blockchain = []
+blockchain.append(create_genesis_block())
 # Store the transactions that
 # this node has in a list
 this_nodes_transactions = []
-# Store the url data of every other node in the network
-# so that we can communicate with them
+# Store the url data of every
+# other node in the network
+# so that we can communicate
+# with them
 peer_nodes = []
 # A variable to deciding if we're mining or not
 mining = True
@@ -111,20 +113,34 @@ def consensus():
   # our chain to the longest one
   blockchain = longest_chain
 
-def proof_of_work(last_proof):
-  # Create a variable that we will use to find
-  # our next proof of work
-  incrementor = last_proof + 1
-  # Keep incrementing the incrementor until
-  # it's equal to a number divisible by 9
-  # and the proof of work of the previous
-  # block in the chain
-  while not (incrementor % 9 == 0 and incrementor % last_proof == 0):
-    incrementor += 1
-  # Once that number is found,
-  # we can return it as a proof
-  # of our work
-  return incrementor
+def generation (challenge):
+  size = 25
+  answer = "".join(random.choice(string.ascii_lowercase+string.ascii_uppercase+string.digits) for x in range(size))
+  attempt = challenge + answer
+  return attempt, answer
+
+#challenge = hasher.sha256(block.encode()).hexdigest()
+def proof_of_work(block):
+    Found = False
+    challenge = "".join(random.choice(string.ascii_lowercase+string.ascii_uppercase+string.digits) for x in range(25))
+    start = time.time()
+    while Found == False:
+        attempt, answer = generation(challenge)
+        shaHash = hasher.sha256(attempt.encode("utf-8"))
+        solution = shaHash.hexdigest()
+        if solution.startswith("0000"):
+            TimeTook = time.time() -start
+            #print("Solution:", solution)
+            #print("Time took:",TimeTook)
+            #print("Attempt:", attempt)
+            #print("Test:", hasher.sha256(attempt.encode("utf-8")).hexdigest())
+            Found=True
+            return(answer,challenge)
+
+def proof_validation(challenge, answer):
+
+  if hasher.sha256((challenge + answer).encode("utf-8")).hexdigest().startswith("0000"):
+    return True
 
 @node.route('/mine', methods = ['GET'])
 def mine():
@@ -135,7 +151,7 @@ def mine():
   # the current block being mined
   # Note: The program will hang here until a new
   #       proof of work is found
-  proof = proof_of_work(last_proof)
+  proof = proof_of_work(last_block)
   # Once we find a valid proof of work,
   # we know we can mine a block so 
   # we reward the miner by adding a transaction
