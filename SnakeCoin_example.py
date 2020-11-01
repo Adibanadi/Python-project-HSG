@@ -35,7 +35,7 @@ def create_genesis_block():
   }, "0")
 
 # A completely random address of the owner of this node
-miner_address = "q3nf394hjg-random-miner-address-34nf3i4nflkn3oi"
+miner_address = "random-miner-address"
 # This node's blockchain copy
 blockchain = []
 blockchain.append(create_genesis_block())
@@ -113,12 +113,17 @@ def consensus():
   # our chain to the longest one
   blockchain = longest_chain
 
+#Taking the challenge and appending a random string of 25 characters to it
 def generation (challenge):
   size = 25
   answer = "".join(random.choice(string.ascii_lowercase+string.ascii_uppercase+string.digits) for x in range(size))
   attempt = challenge + answer
   return attempt, answer
 
+#Taking the hash of the last block and setting it as the challenge
+#Using the generation function to create new hashes until it starts with a given amount of 0's.
+#Returning the answer which was created with the generation function
+#Open points: 1. the time a miner needs to create a a new block. 2. Difficulty adjusting. 3. Instead of using the last hash as challenge, using data from the transactions (like code below, but its not yet working)
 #challenge = hasher.sha256(block.encode()).hexdigest()
 def proof_of_work(last_hash):
     Found = False
@@ -130,23 +135,22 @@ def proof_of_work(last_hash):
         solution = shaHash.hexdigest()
         if solution.startswith("0000"):
             TimeTook = time.time() -start
-            #print("Solution:", solution)
             #print("Time took:",TimeTook)
-            #print("Attempt:", attempt)
-            #print("Test:", hasher.sha256(attempt.encode("utf-8")).hexdigest())
             Found=True
             return(answer)
 
+#Testing if the proof of work actually meets the creteria
+#getting the hash from the last block and the answer from the proof of work and check if it starts if a given amount of 0's
 def proof_validation(answer):
   challenge = blockchain[len(blockchain) - 1].hash
-  if hasher.sha256((challenge + answer).encode("utf-8")).hexdigest().startswith("00000"):
+  if hasher.sha256((challenge + answer).encode("utf-8")).hexdigest().startswith("0000"):
     return True
   else:
     return False
 
 @node.route('/mine', methods = ['GET'])
 def mine():
-  # Get the last proof of work
+  # Get the hash of the last block
   last_block = blockchain[len(blockchain) - 1]
   last_hash = last_block.hash
   # Find the proof of work for
@@ -154,7 +158,9 @@ def mine():
   # Note: The program will hang here until a new
   #       proof of work is found
   answer = proof_of_work(last_hash)
+  #Testing if the proof is legit and proceeding if everything is okay
   if proof_validation(answer) == False:
+    #Comment Adrian: the printing is not yet working and I don't know why (it just crashes if proof not valid, which is kinda okay)
     print("Validation was not successfull, try again.")
   else:
     # Once we find a valid proof of work,
