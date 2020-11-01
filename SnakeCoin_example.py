@@ -120,9 +120,9 @@ def generation (challenge):
   return attempt, answer
 
 #challenge = hasher.sha256(block.encode()).hexdigest()
-def proof_of_work(block):
+def proof_of_work(last_hash):
     Found = False
-    challenge = "".join(random.choice(string.ascii_lowercase+string.ascii_uppercase+string.digits) for x in range(25))
+    challenge = last_hash
     start = time.time()
     while Found == False:
         attempt, answer = generation(challenge)
@@ -135,55 +135,60 @@ def proof_of_work(block):
             #print("Attempt:", attempt)
             #print("Test:", hasher.sha256(attempt.encode("utf-8")).hexdigest())
             Found=True
-            return(answer,challenge)
+            return(answer)
 
-def proof_validation(challenge, answer):
-
-  if hasher.sha256((challenge + answer).encode("utf-8")).hexdigest().startswith("0000"):
+def proof_validation(answer):
+  challenge = blockchain[len(blockchain) - 1].hash
+  if hasher.sha256((challenge + answer).encode("utf-8")).hexdigest().startswith("00000"):
     return True
+  else:
+    return False
 
 @node.route('/mine', methods = ['GET'])
 def mine():
   # Get the last proof of work
   last_block = blockchain[len(blockchain) - 1]
-  last_proof = last_block.data['proof-of-work']
+  last_hash = last_block.hash
   # Find the proof of work for
   # the current block being mined
   # Note: The program will hang here until a new
   #       proof of work is found
-  proof = proof_of_work(last_block)
-  # Once we find a valid proof of work,
-  # we know we can mine a block so 
-  # we reward the miner by adding a transaction
-  this_nodes_transactions.append(
-    { "from": "network", "to": miner_address, "amount": 1 }
-  )
-  # Now we can gather the data needed
-  # to create the new block
-  new_block_data = {
-    "proof-of-work": proof,
-    "transactions": list(this_nodes_transactions)
-  }
-  new_block_index = last_block.index + 1
-  new_block_timestamp = this_timestamp = date.datetime.now()
-  last_block_hash = last_block.hash
-  # Empty transaction list
-  this_nodes_transactions[:] = []
-  # Now create the
-  # new block!
-  mined_block = Block(
-    new_block_index,
-    new_block_timestamp,
-    new_block_data,
-    last_block_hash
-  )
-  blockchain.append(mined_block)
-  # Let the client know we mined a block
-  return json.dumps({
-      "index": new_block_index,
-      "timestamp": str(new_block_timestamp),
-      "data": new_block_data,
-      "hash": last_block_hash
-  }) + "\n"
+  answer = proof_of_work(last_hash)
+  if proof_validation(answer) == False:
+    print("Validation was not successfull, try again.")
+  else:
+    # Once we find a valid proof of work,
+    # we know we can mine a block so 
+    # we reward the miner by adding a transaction
+    this_nodes_transactions.append(
+      { "from": "network", "to": miner_address, "amount": 1 }
+    )
+    # Now we can gather the data needed
+    # to create the new block
+    new_block_data = {
+      "proof-of-work": answer,
+      "transactions": list(this_nodes_transactions)
+    }
+    new_block_index = last_block.index + 1
+    new_block_timestamp = this_timestamp = date.datetime.now()
+    last_block_hash = last_block.hash
+    # Empty transaction list
+    this_nodes_transactions[:] = []
+    # Now create the
+    # new block!
+    mined_block = Block(
+      new_block_index,
+      new_block_timestamp,
+      new_block_data,
+      last_block_hash
+    )
+    blockchain.append(mined_block)
+    # Let the client know we mined a block
+    return json.dumps({
+        "index": new_block_index,
+        "timestamp": str(new_block_timestamp),
+        "data": new_block_data,
+        "hash": last_block_hash
+    }) + "\n"
 
 node.run()
