@@ -17,6 +17,7 @@ node = Flask(__name__)
 # Define what a block is,
 # including function returning the hash of the block
 class Block:
+<<<<<<< HEAD
     def __init__(self, index, timestamp, data, previous_hash):
         self.index = index
         self.timestamp = timestamp
@@ -248,6 +249,48 @@ def share_block():
 # and adds it to the unconfirmed transactions list
 # (Note: transaction is not yet executed, only when next block is mined)
 @node.route('/add_transaction', methods=['POST'])
+=======
+  def __init__(self, index, timestamp, data, previous_hash):
+    self.index = index
+    self.timestamp = timestamp
+    self.data = data
+    self.previous_hash = previous_hash
+    self.hash = self.hash_block()
+  
+  def hash_block(self):
+    sha = hasher.sha256()
+    seq = (str(x) for x in (
+        self.index, self.timestamp, self.data, self.previous_hash))
+    sha.update(''.join(seq).encode('utf-8'))
+    return sha.hexdigest()
+
+# Generate genesis block
+def create_genesis_block():
+  # Manually construct a block with
+  # index zero and arbitrary previous hash
+  return Block(0, date.datetime.now(), {
+    "proof-of-work": 9,
+    "transactions": None
+  }, "0")
+
+# A completely random address of the owner of this node
+miner_address = "random-miner-address"
+# This node's blockchain copy
+blockchain = []
+blockchain.append(create_genesis_block())
+# Store the transactions that
+# this node has in a list
+this_nodes_transactions = []
+# Store the url data of every
+# other node in the network
+# so that we can communicate
+# with them
+peer_nodes = []
+# A variable to deciding if we're mining or not
+mining = True
+
+@node.route('/txion', methods=['POST'])
+>>>>>>> f32d57560d1b10b90a342ab80cdd5700f713d723
 def transaction():
     transaction_data = request.get_json()
     blockchain.unconfirmed_transactions.append({
@@ -331,6 +374,7 @@ def perform_consensus():
 # on which the most work has been done
 # 3. Lets the user know that consensus has been reached
 def consensus():
+<<<<<<< HEAD
     global blockchain
     for chain in find_new_chains():
         new_blockchain = Blockchain()
@@ -367,3 +411,103 @@ def get_blocks():
         blocks.append(block.to_dict())
 
     return json.dumps(blocks)
+=======
+  # Get the blocks from other nodes
+  other_chains = find_new_chains()
+  # If our chain isn't longest,
+  # then we store the longest chain
+  longest_chain = blockchain
+  for chain in other_chains:
+    if len(longest_chain) < len(chain):
+      longest_chain = chain
+  # If the longest chain isn't ours,
+  # then we stop mining and set
+  # our chain to the longest one
+  blockchain = longest_chain
+
+#Taking the challenge and appending a random string of 25 characters to it
+def generation (challenge):
+  size = 25
+  answer = "".join(random.choice(string.ascii_lowercase+string.ascii_uppercase+string.digits) for x in range(size))
+  attempt = challenge + answer
+  return attempt, answer
+
+#Taking the hash of the last block and setting it as the challenge
+#Using the generation function to create new hashes until it starts with a given amount of 0's.
+#Returning the answer which was created with the generation function
+#Open points: 1. the time a miner needs to create a a new block. 2. Difficulty adjusting. 3. Instead of using the last hash as challenge, using data from the transactions (like code below, but its not yet working)
+#challenge = hasher.sha256(block.encode()).hexdigest()
+def proof_of_work(last_hash):
+    Found = False
+    challenge = last_hash
+    start = time.time()
+    while Found == False:
+        attempt, answer = generation(challenge)
+        shaHash = hasher.sha256(attempt.encode("utf-8"))
+        solution = shaHash.hexdigest()
+        if solution.startswith("0000"):
+            TimeTook = time.time() -start
+            #print("Time took:",TimeTook)
+            Found=True
+            return(answer)
+
+#Testing if the proof of work actually meets the creteria
+#getting the hash from the last block and the answer from the proof of work and check if it starts if a given amount of 0's
+def proof_validation(answer):
+  challenge = blockchain[len(blockchain) - 1].hash
+  if hasher.sha256((challenge + answer).encode("utf-8")).hexdigest().startswith("0000"):
+    return True
+  else:
+    return False
+
+@node.route('/mine', methods = ['GET'])
+def mine():
+  # Get the hash of the last block
+  last_block = blockchain[len(blockchain) - 1]
+  last_hash = last_block.hash
+  # Find the proof of work for
+  # the current block being mined
+  # Note: The program will hang here until a new
+  #       proof of work is found
+  answer = proof_of_work(last_hash)
+  #Testing if the proof is legit and proceeding if everything is okay
+  if proof_validation(answer) == False:
+    #Comment Adrian: the printing is not yet working and I don't know why (it just crashes if proof not valid, which is kinda okay)
+    print("Validation was not successfull, try again.")
+  else:
+    # Once we find a valid proof of work,
+    # we know we can mine a block so 
+    # we reward the miner by adding a transaction
+    this_nodes_transactions.append(
+      { "from": "network", "to": miner_address, "amount": 1 }
+    )
+    # Now we can gather the data needed
+    # to create the new block
+    new_block_data = {
+      "proof-of-work": answer,
+      "transactions": list(this_nodes_transactions)
+    }
+    new_block_index = last_block.index + 1
+    new_block_timestamp = this_timestamp = date.datetime.now()
+    last_block_hash = last_block.hash
+    # Empty transaction list
+    this_nodes_transactions[:] = []
+    # Now create the
+    # new block!
+    mined_block = Block(
+      new_block_index,
+      new_block_timestamp,
+      new_block_data,
+      last_block_hash
+    )
+    blockchain.append(mined_block)
+    # Let the client know we mined a block
+    return json.dumps({
+        "index": new_block_index,
+        "timestamp": str(new_block_timestamp),
+        "data": new_block_data,
+        "hash": last_block_hash
+    }) + "\n"
+
+node.run()
+>>>>>>> f32d57560d1b10b90a342ab80cdd5700f713d723
