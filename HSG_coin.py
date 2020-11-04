@@ -100,9 +100,6 @@ class Blockchain:
     # that starts with a given required amount of 0's.
     # 3. Returns the answer for which the attempt was associated with a valid hash,
     # which fulfils the requirement.
-    # TODO Open points: 1. the time a miner needs to create a a new block.2. Difficulty adjusting.
-    # TODO 3. Instead of using the last hash as challenge, using data from the transactions
-    # TODO (like code below, but its not yet working) challenge = hasher.sha256(block.encode()).hexdigest()
     def proof_of_work(self, last_hash):
         challenge = last_hash
         while True:
@@ -133,10 +130,7 @@ class Blockchain:
             return False
 
         answer = block.data["proof-of-work"]
-        if not self.proof_validation(answer):
-            return False
-
-        return True
+        return self.proof_validation(answer)
 
     # Function required to create consensus (see below in part 2)
     # which checks the data of each block in a chain if it is valid
