@@ -16,3 +16,6 @@ curl -X POST -H "Content-Type: application/json" -d "{\"from\": \"Michele\", \"t
 curl -X POST -H "Content-Type: application/json" -d "{\"miner\": \"Michele\"}" http://127.0.0.1:5005/mine
 curl -X POST -H "Content-Type: application/json" -d "{\"miner\": \"Adi\"}" http://127.0.0.1:5003/mine
 
+# Show all existing blocks
+curl -X GET http://127.0.0.1:5003/blocks
+curl -X GET http://127.0.0.1:5005/blocks
