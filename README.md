@@ -168,9 +168,9 @@ Tutorial for adding nodes:
 
 ## Contributors
 
-* Michèle Fiori - 16-608-093
-* Fabio Gschwind - 16-609-471
-* Adrian Wyss - 16-621-260
+* Michèle Fiori
+* Fabio Gschwind
+* Adrian Wyss
 
 ## Possible Extension
 
