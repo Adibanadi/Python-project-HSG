@@ -83,7 +83,7 @@ Note: the transaction is submitted, but not yet added to the blockchain. First a
 To see all the blocks of the current Blockchain, enter the following command in the terminal:
 
 ```sh
-Curl http://127.0.0.1:5003/blocks
+curl http://127.0.0.1:5003/blocks
 ```
 
 Note: As already described in 4.2, only transactions that were mined will be displayed.
@@ -125,7 +125,7 @@ Note: Both nodes are now connected and can both mine blocks for the same blockch
 Note: If you want to double-check, if the consensus worked, enter for the new HTTP address the /blocks code:
 
 ```sh
-Curl http://127.0.0.1:5005/blocks
+curl http://127.0.0.1:5005/blocks
 ```
 
 
