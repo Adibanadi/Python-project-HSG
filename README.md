@@ -52,7 +52,7 @@ Note: The blockchain application now should be up and running at port 5003. This
 ### 4. Perform the Different Functionalities with the Application
 
 Open another terminal to perform functionalities. 
-To understand what each functionality does, refer to the [ReadMe_Code Structure](xyz). 
+To understand what each functionality does, refer to the [ReadMe_Code Structure](README_Code Structure.md). 
 For all functionalities the default host address is *http://127.0.0.1:5003/* . However you can replace it with the address you are using.
 
 ### 4.1 Mine
@@ -132,7 +132,7 @@ Curl http://127.0.0.1:5005/blocks
 ## Files
 
 ReadMe:
-* [ReadMe_Code Structure](xyz)
+* [ReadMe_Code Structure](README_Code Structure.md)
 
 Code: 
 * /HSG_coin.py	
@@ -153,7 +153,7 @@ Additionally, there is the possibility to add different nodes to the network to 
 
 The blockchain can be extended indefinitely.
 
-The structure of our code and a detailed description of it can be found in a separate [ReadMe_Code Structure](xyz).
+The structure of our code and a detailed description of it can be found in a separate [ReadMe_Code Structure](README_Code Structure.md).
 
 ## Sources
 
