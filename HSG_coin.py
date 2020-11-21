@@ -1,3 +1,6 @@
+## HSG COIN
+## Writing a Blockchain with Python
+
 from flask import Flask
 from flask import request
 import json
