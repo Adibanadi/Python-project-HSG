@@ -140,9 +140,6 @@ Code:
 * /run2.py
 * /run3.py
 
-Example entries to use the blockchain (JSON format):
-* /Terminal_entries_examples
-
 ## Description
 
 A simple blockchain containing basic elements which uses the Flask library of Python to create a simple HTTP network for interaction. It is possible to add transactions, mining, and to check the length of the blockchain. 
