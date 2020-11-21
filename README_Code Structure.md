@@ -211,7 +211,7 @@ peer_nodes = set()
 
 ### Creating Endpoints
 
-#### 2.1 Mine
+### 2.1 Mine
 
 Endpoint which allows user to mine a block if he enters '/mine'
 
@@ -243,7 +243,7 @@ def announce_new_block(block: Block):
         print(response)
 ```
 
-#### 2.2 Share block
+### 2.2 Share block
 
 For each of the other nodes the mining node calls the following endpoint which is executed on these nodes host addresses. It extracts the information about the new block, checks it for its validity, whereby if not valid checks for consensus (this ensures that if the node's own blockchain is not the most current one, this does not hinder the validation) and then informs the mining node (user) if validated or not. For each other node on which the validation ran successfully, this specific other node receives a message that a new block mined by another node was added to its blockchain.
 Note: We are using a simple HTTP network. Thus, we are using HTTP status codes such as 200 (“Ok”),  201 ('created') or 400 ('bad_request', 'bad').
@@ -264,7 +264,7 @@ def share_block():
     return "Block has been added to the shared blockchain", 201
 ```
 
-#### 2.3 Add transactions
+### 2.3 Add transactions
 
 Endpoint which allows user to send coins to another if he enters '/transaction'. It extracts transaction information on each POST request and adds it to the unconfirmed transactions list (Note: transaction is not yet executed, only when next block is mined!).
 
@@ -281,7 +281,7 @@ def transaction():
     return "Transaction submission successful", 201
 ```
 
-#### 2.4 Registering other nodes
+### 2.4 Registering other nodes
 
 Endpoint which allows user to add another node to its network if he enters '/register_other_node'. Requires user to define "node_address" of other node in his request by manually entering the specific node's host address.
 
@@ -342,7 +342,7 @@ def add_to_peers_network():
 
 *Note: After a node has been added to network (own list of peers), perform consensus to align the blockchains.*
 
-#### 2.5 Consensus
+### 2.5 Consensus
 
 Endpoint which allows users to achieve consensus on some version of the chain. Aims at ensuring consistency/integrity of the chain.
 
@@ -388,7 +388,7 @@ def find_new_chains():
     return other_chains
 ```
 
-#### 2.6 Calling the blockchain
+### 2.6 Calling the blockchain
 
 For each of the other nodes the node performing the consensus calls the following endpoint which is executed on these nodes host addresses. Collects the blocks of the node's chain in a list and stores it in JSON format to be sent to the node performing the consensus.
 
