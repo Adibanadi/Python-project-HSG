@@ -135,10 +135,10 @@ ReadMe:
 * [ReadMe_Code Structure](https://github.com/Adibanadi/Python-project-HSG/blob/main/README_Code%20Structure.md)
 
 Code: 
-* /HSG_coin.py	
-* /run.py
-* /run2.py
-* /run3.py
+* [/HSG_coin.py](https://github.com/Adibanadi/Python-project-HSG/blob/main/HSG_coin.py)
+* [/run.py](https://github.com/Adibanadi/Python-project-HSG/blob/main/run.py)
+* [/run2.py](https://github.com/Adibanadi/Python-project-HSG/blob/main/run2.py)
+* [/run3.py](https://github.com/Adibanadi/Python-project-HSG/blob/main/run3.py)
 
 ## Description
 
